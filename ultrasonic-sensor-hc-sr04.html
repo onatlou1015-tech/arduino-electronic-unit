@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ultrasonic Sensor (HC-SR04) · Grade 10</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --dark: #223142;
+      --amber: #f0b634;
+      --red: #d64439;
+      --teal: #3aa68a;
+      --mist: #dce2e2;
+      --white: #ffffff;
+      --off-white: #f4f7f7;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--mist);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(34, 49, 66, 0.08), 0 6px 12px rgba(34, 49, 66, 0.05);
+      padding: 2.5rem 2.5rem 3rem;
+    }
+
+    /* ---------- BACK LINK ---------- */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--dark);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: var(--mist);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      margin-bottom: 1.2rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .back-link:hover {
+      background: var(--dark);
+      color: var(--amber);
+    }
+
+    /* ---------- HEADER ---------- */
+    .unit-badge {
+      display: inline-block;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 0.35rem 1.1rem;
+      border-radius: 100px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--dark);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    h1 .accent { color: var(--red); }
+
+    .subhead {
+      font-size: 1.05rem;
+      color: var(--dark);
+      border-left: 5px solid var(--amber);
+      padding: 0.75rem 1.25rem;
+      margin: 0.5rem 0 1.75rem 0;
+      background: #fdf6e3;
+      border-radius: 0 12px 12px 0;
+    }
+
+    /* ---------- IMAGE PLACEHOLDER ---------- */
+    .img-placeholder {
+      background: var(--mist);
+      border: 2px dashed #a8b4b4;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #5a6b6b;
+      font-weight: 500;
+      transition: background 0.2s;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .img-placeholder:hover { background: #d2dbdb; }
+    .img-placeholder i {
+      font-size: 2.8rem;
+      color: #7a8c8c;
+      margin-bottom: 0.5rem;
+    }
+    .img-placeholder span {
+      font-size: 0.9rem;
+      background: #c5d0d0;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      color: var(--dark);
+    }
+    .img-placeholder .hint {
+      font-size: 0.8rem;
+      color: #5a6b6b;
+      margin-top: 0.4rem;
+    }
+    .img-placeholder.small { padding: 1rem; }
+    .img-placeholder.small i { font-size: 2rem; }
+
+    /* ---------- SECTION TITLES ---------- */
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 2.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title i {
+      color: var(--teal);
+      font-size: 1.5rem;
+    }
+
+    .section-sub {
+      color: #4a5c6b;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ---------- CONTENT TEXT ---------- */
+    .content-text {
+      font-size: 1rem;
+      color: var(--dark);
+      background: var(--off-white);
+      border-left: 6px solid var(--teal);
+      padding: 1.3rem 1.7rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0;
+    }
+    .content-text p + p { margin-top: 0.7rem; }
+    .content-text strong { color: var(--dark); }
+
+    /* ---------- INFO CARDS GRID ---------- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .info-card {
+      background: var(--off-white);
+      border-left: 6px solid var(--amber);
+      border-radius: 1rem;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.03);
+      transition: transform 0.15s ease;
+    }
+    .info-card:hover { transform: translateY(-3px); }
+    .info-card i {
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .info-card h4 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.3rem;
+    }
+    .info-card p {
+      font-size: 0.9rem;
+      color: #4a5c6b;
+    }
+
+    /* ---------- FORMULA BOX ---------- */
+    .formula-box {
+      background: linear-gradient(135deg, #223142, #0f2b45);
+      color: var(--white);
+      border-radius: 1.2rem;
+      padding: 1.6rem 2rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      box-shadow: 0 10px 20px rgba(34, 49, 66, 0.15);
+    }
+
+    .formula-box .label {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--amber);
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-bottom: 0.6rem;
+    }
+
+    .formula-box .formula {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      letter-spacing: 0.5px;
+    }
+
+    .formula-box .formula .var {
+      color: var(--amber);
+    }
+
+    .formula-box .hint {
+      font-size: 0.85rem;
+      color: #cdd8d8;
+      margin-top: 0.8rem;
+    }
+
+    /* ---------- PIN REFERENCE TABLE ---------- */
+    .pin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.9rem;
+      background: var(--white);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.04);
+    }
+    .pin-table th {
+      background: var(--dark);
+      color: var(--amber);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .pin-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--mist);
+      color: var(--dark);
+    }
+    .pin-table tr:last-child td { border-bottom: none; }
+    .pin-table tr:nth-child(even) td { background: var(--off-white); }
+
+    /* ---------- CODE BLOCK ---------- */
+    .code-block {
+      margin: 1.5rem 0;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid #0f2b45;
+      background: #0b1e2e;
+      box-shadow: 0 8px 16px rgba(34, 49, 66, 0.15);
+    }
+    .code-header {
+      background: #0f2b45;
+      color: var(--amber);
+      padding: 0.7rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .code-header .filename {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .code-header .filename i { color: var(--amber); }
+    .copy-btn {
+      background: var(--amber);
+      color: var(--dark);
+      border: none;
+      padding: 0.35rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease, transform 0.1s ease;
+      font-family: inherit;
+    }
+    .copy-btn:hover {
+      background: #e0a82a;
+      transform: translateY(-1px);
+    }
+    .copy-btn.copied {
+      background: var(--teal);
+      color: var(--white);
+    }
+    .code-content {
+      padding: 1.2rem 1.4rem;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-content .comment { color: #86efac; }
+    .code-content .keyword { color: #93c5fd; }
+    .code-content .string  { color: #fbbf24; }
+    .code-content .number  { color: #f0b634; }
+
+    /* ---------- STEP LIST ---------- */
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.5rem 0;
+    }
+    .steps-list li {
+      counter-increment: step-counter;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--off-white);
+      border-radius: 1rem;
+      padding: 1rem 1.3rem;
+      margin-bottom: 0.8rem;
+      border-left: 5px solid var(--amber);
+      font-size: 0.95rem;
+      color: var(--dark);
+      transition: transform 0.15s ease;
+    }
+    .steps-list li:hover { transform: translateX(4px); }
+    .steps-list li::before {
+      content: counter(step-counter);
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--dark);
+      color: var(--amber);
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- ACTIVITY BOX ---------- */
+    .activity-box {
+      background: linear-gradient(135deg, #223142, #0f2b45);
+      color: var(--white);
+      border-radius: 1.5rem;
+      padding: 2rem 2.2rem;
+      margin: 2.5rem 0 1rem;
+      box-shadow: 0 12px 24px rgba(34, 49, 66, 0.15);
+    }
+    .activity-box h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+    .activity-box h3 i { color: var(--amber); }
+    .activity-box > p {
+      color: #cdd8d8;
+      font-size: 0.98rem;
+      margin-bottom: 1rem;
+    }
+    .activity-tasks {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(220, 226, 226, 0.15);
+      border-radius: 1rem;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+    }
+    .activity-tasks h4 {
+      color: var(--amber);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .activity-tasks ul { list-style: none; }
+    .activity-tasks ul li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      font-size: 0.92rem;
+      color: #cdd8d8;
+    }
+    .activity-tasks ul li i {
+      color: var(--teal);
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+    .challenge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--red);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+    }
+
+    /* ---------- TIP BOX ---------- */
+    .tip-box {
+      background: #fdf6e3;
+      border-left: 5px solid var(--amber);
+      border-radius: 0 12px 12px 0;
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      font-size: 0.92rem;
+      color: var(--dark);
+    }
+    .tip-box i {
+      color: var(--amber);
+      margin-right: 0.5rem;
+    }
+
+    /* ---------- MY INSTRUCTIONS ---------- */
+    .my-instructions {
+      margin-top: 3rem;
+      border: 2px dashed var(--dark);
+      border-radius: 1.5rem;
+      padding: 1.5rem 2rem 2rem;
+      background: var(--off-white);
+      position: relative;
+    }
+    .my-instructions::before {
+      content: "MY INSTRUCTIONS";
+      position: absolute;
+      top: -0.8rem;
+      left: 2rem;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+    }
+    .my-instructions h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .my-instructions h2 i { color: var(--red); }
+    .my-instructions > p {
+      font-size: 0.92rem;
+      color: #4a5c6b;
+      margin-bottom: 1.2rem;
+    }
+    .instruction-placeholder {
+      background: var(--white);
+      border: 1px dashed #a8b4b4;
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      min-height: 140px;
+      font-size: 0.92rem;
+      color: #5a6b6b;
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .instruction-placeholder strong {
+      color: var(--dark);
+      font-style: normal;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ---------- NEXT LESSON BUTTON ---------- */
+    .next-lesson-wrapper {
+      margin-top: 3rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .next-lesson-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: var(--dark);
+      color: var(--white);
+      text-decoration: none;
+      padding: 1rem 1.6rem 1rem 1.8rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(34, 49, 66, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      max-width: 480px;
+    }
+    .next-lesson-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(34, 49, 66, 0.25);
+      background: #1a2735;
+    }
+    .next-lesson-btn .next-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+    .next-lesson-btn .next-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .next-lesson-btn .next-icon {
+      font-size: 1.4rem;
+      color: var(--amber);
+      transition: transform 0.15s ease;
+    }
+    .next-lesson-btn:hover .next-icon {
+      transform: translateX(5px);
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer-note {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #6b7c7c;
+      border-top: 1px solid var(--mist);
+      padding-top: 1.5rem;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      .page { padding: 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .code-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+      .activity-box { padding: 1.5rem; }
+      .my-instructions { padding: 1.2rem; }
+      .next-lesson-wrapper { justify-content: center; }
+      .next-lesson-btn { width: 100%; }
+      .formula-box .formula { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- ================= BACK LINK ================= -->
+    <a class="back-link" href="index.html">
+      <i class="fas fa-arrow-left"></i> Back to Project Home
+    </a>
+
+    <!-- ================= HEADER ================= -->
+    <span class="unit-badge"><i class="fas fa-ruler-horizontal" style="margin-right: 6px;"></i>Week 5 · Lesson Page</span>
+    <h1>Ultrasonic Sensor <span class="accent">(HC-SR04)</span></h1>
+    <div class="subhead">
+      <i class="fas fa-wave-square" style="margin-right: 8px;"></i>
+      Learn how sound waves measure distance with time-of-flight, and use the HC-SR04 to give your robot "eyes" for obstacle avoidance.
+    </div>
+
+    <!-- ============ HERO IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder">
+      <i class="fas fa-image"></i>
+      <span>📸 Upload: HC-SR04 ultrasonic sensor mounted on a robot, measuring distance to a wall</span>
+      <p class="hint">Recommended size: 1200 × 400 px · JPG or PNG</p>
+    </div>
+
+    <!-- ================= 1. HOW ULTRASONIC SENSORS WORK ================= -->
+    <div class="section-title">
+      <i class="fas fa-wave-square"></i> 1. How Does an Ultrasonic Sensor Work?
+    </div>
+    <div class="content-text">
+      <p>
+        The <strong>HC-SR04</strong> measures distance using <strong>sound waves</strong> — specifically
+        ultrasonic waves, which are too high-pitched for humans to hear. It works like a bat or a
+        submarine sonar: it <strong>sends out a pulse</strong> of sound, waits for the echo to come
+        back, and measures how long that took.
+      </p>
+      <p>
+        Since we know the <strong>speed of sound</strong> in air (~343 m/s), we can calculate distance:
+        <strong>distance = (time × speed of sound) ÷ 2</strong>. We divide by 2 because the sound
+        travels to the object <em>and back</em>.
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fas fa-bullhorn"></i>
+        <h4>Trigger (Transmitter)</h4>
+        <p>Emits an ultrasonic "ping" — a short burst of high-frequency sound.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-ear-listen"></i>
+        <h4>Echo (Receiver)</h4>
+        <p>Listens for the reflected sound wave coming back from the object.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-microchip"></i>
+        <h4>Control Circuit</h4>
+        <p>Measures how long the echo took and outputs the duration to the Arduino.</p>
+      </div>
+    </div>
+
+    <!-- Sensor image placeholder -->
+    <div class="img-placeholder small">
+      <i class="fas fa-camera"></i>
+      <span>📸 Upload: Close-up of the HC-SR04 showing the two "eyes" (transmitter & receiver)</span>
+    </div>
+
+    <!-- ================= 2. FORMULA ================= -->
+    <div class="section-title">
+      <i class="fas fa-calculator"></i> 2. The Distance Formula
+    </div>
+    <p class="section-sub">
+      The Arduino measures how long the echo took (in microseconds). We use this formula to convert that time into distance:
+    </p>
+
+    <div class="formula-box">
+      <div class="label">Distance Formula</div>
+      <div class="formula">
+        distance (cm) = <span class="var">duration</span> × <span class="var">0.0343</span> ÷ 2
+      </div>
+      <div class="hint">
+        duration = time for the sound to travel (in microseconds) · 0.0343 cm/µs = speed of sound
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>Why divide by 2?</strong> The sound has to travel to the object AND back. The duration we measure covers both trips. Dividing by 2 gives us just the one-way distance.
+    </div>
+
+    <!-- ================= 3. HC-SR04 PINOUT ================= -->
+    <div class="section-title">
+      <i class="fas fa-diagram-project"></i> 3. HC-SR04 Pinout
+    </div>
+    <div class="content-text">
+      <p>
+        The HC-SR04 has <strong>four pins</strong>. It's simple to wire — two for power, and two for
+        the trigger/echo signals.
+      </p>
+    </div>
+
+    <table class="pin-table">
+      <tr>
+        <th>Pin</th>
+        <th>Connect to</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><strong>VCC</strong></td>
+        <td>Arduino 5V</td>
+        <td>Powers the sensor.</td>
+      </tr>
+      <tr>
+        <td><strong>Trig</strong></td>
+        <td>Arduino digital pin (e.g., 9)</td>
+        <td>Arduino sends a 10 µs HIGH pulse to start a measurement.</td>
+      </tr>
+      <tr>
+        <td><strong>Echo</strong></td>
+        <td>Arduino digital pin (e.g., 10)</td>
+        <td>Sensor sends back a pulse whose length equals the round-trip time.</td>
+      </tr>
+      <tr>
+        <td><strong>GND</strong></td>
+        <td>Arduino GND</td>
+        <td>Common ground (essential!).</td>
+      </tr>
+    </table>
+
+    <!-- HC-SR04 pinout image placeholder -->
+    <div class="img-placeholder small">
+      <i class="fas fa-diagram-project"></i>
+      <span>📸 Upload: Labelled HC-SR04 pinout diagram (front & back)</span>
+    </div>
+
+    <!-- ================= 4. RANGE & LIMITATIONS ================= -->
+    <div class="section-title">
+      <i class="fas fa-triangle-exclamation"></i> 4. Range & Limitations
+    </div>
+    <div class="content-text">
+      <p>
+        The HC-SR04 works best between <strong>2 cm and 400 cm</strong> (2 cm to 4 m). Outside that range,
+        readings become unreliable. It also has a <strong>15° measurement cone</strong> — meaning it
+        "sees" a cone of space, not just a single point.
+      </p>
+      <p>
+        Soft or angled surfaces (like foam, cloth, or a wall at 45°) can scatter the sound and give
+        bad readings. For best results, keep the target flat and perpendicular to the sensor.
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fas fa-ruler"></i>
+        <h4>Range: 2–400 cm</h4>
+        <p>Reliable readings from 2 cm up to about 4 metres in good conditions.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-angle-double-right"></i>
+        <h4>15° Cone</h4>
+        <p>Measures the closest object within a 15-degree cone in front of it.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-clock"></i>
+        <h4>~60 ms per Read</h4>
+        <p>Don't read too fast — give each measurement about 60 ms to complete.</p>
+      </div>
+    </div>
+
+    <!-- ================= 5. FIVE STUDENT INSTRUCTIONS ================= -->
+    <div class="section-title">
+      <i class="fas fa-list-ol"></i> 5. Quick Start — Five Simple Steps
+    </div>
+    <p class="section-sub">
+      Follow these five steps in order before uploading your code:
+    </p>
+
+    <ol class="steps-list">
+      <li><strong>Wire the sensor:</strong> Connect VCC → 5V, GND → GND, Trig → pin 9, Echo → pin 10.</li>
+      <li><strong>Mount the sensor:</strong> Point it forward, at the same height as the objects you want to detect.</li>
+      <li><strong>Open the Arduino IDE</strong> and paste the code from section 6 below.</li>
+      <li><strong>Open the Serial Monitor</strong> at <strong>9600 baud</strong> to see live distance readings in cm.</li>
+      <li><strong>Test with your hand:</strong> Move your hand closer and farther — the readings should change smoothly.</li>
+    </ol>
+
+    <!-- ================= 6. CODE — MEASURE DISTANCE ================= -->
+    <div class="section-title">
+      <i class="fas fa-code"></i> 6. Code — Measure Distance on Serial Monitor
+    </div>
+    <p class="section-sub">
+      Click <strong>Copy</strong> and paste this into your Arduino IDE. Open the Serial Monitor to see live readings.
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> ultrasonic_test.ino</span>
+        <button class="copy-btn" data-target="code-1">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-1"><span class="comment">/*
+  Ultrasonic Distance Test — HC-SR04
+  Measures distance and prints it to the Serial Monitor in cm.
+*/</span>
+
+<span class="keyword">const int</span> trigPin = <span class="number">9</span>;
+<span class="keyword">const int</span> echoPin = <span class="number">10</span>;
+
+<span class="keyword">void</span> setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  Serial.begin(<span class="number">9600</span>);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="comment">// Send a 10 µs pulse to trigger</span>
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(<span class="number">2</span>);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(<span class="number">10</span>);
+  digitalWrite(trigPin, LOW);
+
+  <span class="comment">// Measure how long the echo pin stays HIGH</span>
+  <span class="keyword">long</span> duration = pulseIn(echoPin, HIGH);
+
+  <span class="comment">// Calculate distance in cm</span>
+  <span class="keyword">float</span> distance = duration * <span class="number">0.0343</span> / <span class="number">2</span>;
+
+  Serial.print(<span class="string">"Distance: "</span>);
+  Serial.print(distance);
+  Serial.println(<span class="string">" cm"</span>);
+
+  delay(<span class="number">100</span>);
+}</div>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>How it works:</strong> The Arduino sends a short pulse on <code>trigPin</code>, then measures how long the echo pin stays HIGH using <code>pulseIn()</code>. That time is converted into a distance using the speed of sound.
+    </div>
+
+    <!-- ================= 7. CODE — OBSTACLE AVOIDANCE ================= -->
+    <div class="section-title">
+      <i class="fas fa-gauge-high"></i> 7. Code — Simple Obstacle Avoidance
+    </div>
+    <p class="section-sub">
+      Combine the sensor with your L298P motor driver to make the robot stop when something is too close.
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> avoid_obstacle.ino</span>
+        <button class="copy-btn" data-target="code-2">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-2"><span class="comment">/*
+  Obstacle Avoidance — HC-SR04 + L298P
+  Robot drives forward until an object is closer than 20 cm,
+  then stops and reverses briefly.
+*/</span>
+
+<span class="comment">// Ultrasonic sensor pins</span>
+<span class="keyword">const int</span> trigPin = <span class="number">9</span>;
+<span class="keyword">const int</span> echoPin = <span class="number">10</span>;
+
+<span class="comment">// L298P motor control pins</span>
+<span class="keyword">const int</span> IN1 = <span class="number">8</span>;
+<span class="keyword">const int</span> IN2 = <span class="number">7</span>;
+<span class="keyword">const int</span> IN3 = <span class="number">6</span>;
+<span class="keyword">const int</span> IN4 = <span class="number">5</span>;
+
+<span class="keyword">const int</span> SAFE_DISTANCE = <span class="number">20</span>;  <span class="comment">// cm</span>
+
+<span class="keyword">void</span> setup() {
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+  Serial.begin(<span class="number">9600</span>);
+}
+
+<span class="comment">// Return distance in cm</span>
+<span class="keyword">float</span> getDistance() {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(<span class="number">2</span>);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(<span class="number">10</span>);
+  digitalWrite(trigPin, LOW);
+
+  <span class="keyword">long</span> duration = pulseIn(echoPin, HIGH);
+  <span class="keyword">return</span> duration * <span class="number">0.0343</span> / <span class="number">2</span>;
+}
+
+<span class="keyword">void</span> forward() {
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> backward() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, HIGH);
+}
+
+<span class="keyword">void</span> stopMotors() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="keyword">float</span> distance = getDistance();
+  Serial.print(distance);
+  Serial.println(<span class="string">" cm"</span>);
+
+  <span class="keyword">if</span> (distance &gt; <span class="number">0</span> &amp;&amp; distance &lt; SAFE_DISTANCE) {
+    <span class="comment">// Too close — stop, then reverse briefly</span>
+    stopMotors();
+    delay(<span class="number">300</span>);
+    backward();
+    delay(<span class="number">500</span>);
+    stopMotors();
+  } <span class="keyword">else</span> {
+    <span class="comment">// Path is clear — go forward</span>
+    forward();
+  }
+
+  delay(<span class="number">60</span>);
+}</div>
+    </div>
+
+    <!-- ================= 8. ACTIVITY ================= -->
+    <div class="activity-box">
+      <h3><i class="fas fa-flask"></i> Activity: Measure & Avoid <span class="challenge-tag">Hands-On</span></h3>
+      <p>
+        Wire the HC-SR04, get live readings, then use those readings to make your robot react to obstacles.
+      </p>
+
+      <div class="activity-tasks">
+        <h4><i class="fas fa-list-check"></i> Your Tasks</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> <strong>Task 1 — Wire the sensor:</strong> Connect VCC → 5V, GND → GND, Trig → D9, Echo → D10.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 2 — Serial Monitor test:</strong> Upload the ultrasonic_test code and watch live distance readings. Move your hand to confirm they change.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 3 — Measure & mark:</strong> Place objects at 10 cm, 25 cm, and 50 cm and record the reading for each. How accurate is the sensor?</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 4 — Tune the threshold:</strong> Open the avoid_obstacle code and change <code>SAFE_DISTANCE</code> to 30 cm. Upload and test.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 5 — Reflection:</strong> In two sentences, explain how the sensor calculates distance and why we divide by 2.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ ACTIVITY IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder small">
+      <i class="fas fa-project-diagram"></i>
+      <span>📸 Upload: Wiring diagram — Arduino + HC-SR04 + L298P + motors + battery</span>
+    </div>
+
+    <!-- ============================================
+         MY INSTRUCTIONS SECTION
+         ============================================ -->
+    <div class="my-instructions">
+      <h2><i class="fas fa-pen-to-square"></i> My Instructions</h2>
+      <p>
+        This section is reserved for your own instructions. Replace the placeholder below with your content when you're ready.
+      </p>
+
+      <div class="instruction-placeholder">
+        <strong>📝 Placeholder — Add your instructions here:</strong>
+        Write your own step-by-step instructions, tips, or reminders for students.<br>
+        You can use this space to add classroom rules, extra challenges, submission guidelines, or anything else you want to include.<br>
+        Replace this placeholder text with your content.
+      </div>
+    </div>
+
+    <!-- ============================================
+         NEXT LESSON BUTTON
+         ============================================ -->
+    <div class="next-lesson-wrapper">
+      <a class="next-lesson-btn" href="bluetooth-module-hc-05-hc-06.html">
+        <div>
+          <span class="next-label">Next Lesson →</span>
+          <span class="next-title">Bluetooth Module (HC-05 / HC-06)</span>
+        </div>
+        <i class="fas fa-circle-arrow-right next-icon"></i>
+      </a>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <div class="footer-note">
+      <i class="fas fa-ruler-horizontal"></i> Ultrasonic Sensor (HC-SR04) · Grade 10 STEM
+    </div>
+
+  </div>
+
+  <!-- ================= COPY BUTTON SCRIPT ================= -->
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', async () => {
+        const targetId = button.getAttribute('data-target');
+        const codeEl = document.getElementById(targetId);
+        if (!codeEl) return;
+
+        const codeText = codeEl.innerText;
+
+        try {
+          await navigator.clipboard.writeText(codeText);
+        } catch (err) {
+          const textarea = document.createElement('textarea');
+          textarea.value = codeText;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+
+        const originalHTML = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalHTML;
+        }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>

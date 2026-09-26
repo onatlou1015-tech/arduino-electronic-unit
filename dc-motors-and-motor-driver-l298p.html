@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DC Motors & Motor Driver (L298P) · Grade 10</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --dark: #223142;
+      --amber: #f0b634;
+      --red: #d64439;
+      --teal: #3aa68a;
+      --mist: #dce2e2;
+      --white: #ffffff;
+      --off-white: #f4f7f7;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--mist);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(34, 49, 66, 0.08), 0 6px 12px rgba(34, 49, 66, 0.05);
+      padding: 2.5rem 2.5rem 3rem;
+    }
+
+    /* ---------- BACK LINK ---------- */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--dark);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: var(--mist);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      margin-bottom: 1.2rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .back-link:hover {
+      background: var(--dark);
+      color: var(--amber);
+    }
+
+    /* ---------- HEADER ---------- */
+    .unit-badge {
+      display: inline-block;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 0.35rem 1.1rem;
+      border-radius: 100px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--dark);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    h1 .accent { color: var(--red); }
+
+    .subhead {
+      font-size: 1.05rem;
+      color: var(--dark);
+      border-left: 5px solid var(--amber);
+      padding: 0.75rem 1.25rem;
+      margin: 0.5rem 0 1.75rem 0;
+      background: #fdf6e3;
+      border-radius: 0 12px 12px 0;
+    }
+
+    /* ---------- IMAGE PLACEHOLDER ---------- */
+    .img-placeholder {
+      background: var(--mist);
+      border: 2px dashed #a8b4b4;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #5a6b6b;
+      font-weight: 500;
+      transition: background 0.2s;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .img-placeholder:hover { background: #d2dbdb; }
+    .img-placeholder i {
+      font-size: 2.8rem;
+      color: #7a8c8c;
+      margin-bottom: 0.5rem;
+    }
+    .img-placeholder span {
+      font-size: 0.9rem;
+      background: #c5d0d0;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      color: var(--dark);
+    }
+    .img-placeholder .hint {
+      font-size: 0.8rem;
+      color: #5a6b6b;
+      margin-top: 0.4rem;
+    }
+    .img-placeholder.small { padding: 1rem; }
+    .img-placeholder.small i { font-size: 2rem; }
+
+    /* ---------- SECTION TITLES ---------- */
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 2.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title i {
+      color: var(--teal);
+      font-size: 1.5rem;
+    }
+
+    .section-sub {
+      color: #4a5c6b;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ---------- CONTENT TEXT ---------- */
+    .content-text {
+      font-size: 1rem;
+      color: var(--dark);
+      background: var(--off-white);
+      border-left: 6px solid var(--teal);
+      padding: 1.3rem 1.7rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0;
+    }
+    .content-text p + p { margin-top: 0.7rem; }
+    .content-text strong { color: var(--dark); }
+
+    /* ---------- INFO CARDS GRID ---------- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .info-card {
+      background: var(--off-white);
+      border-left: 6px solid var(--amber);
+      border-radius: 1rem;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.03);
+      transition: transform 0.15s ease;
+    }
+    .info-card:hover { transform: translateY(-3px); }
+    .info-card i {
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .info-card h4 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.3rem;
+    }
+    .info-card p {
+      font-size: 0.9rem;
+      color: #4a5c6b;
+    }
+
+    /* ---------- H-BRIDGE DIAGRAM CARD ---------- */
+    .hbridge-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .hbridge-card {
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      border: 1px solid;
+    }
+    .hbridge-card.forward {
+      background: #e8f5f1;
+      border-color: #b8ddd3;
+      border-left: 6px solid var(--teal);
+    }
+    .hbridge-card.reverse {
+      background: #fdf6e3;
+      border-color: #e8d49a;
+      border-left: 6px solid var(--amber);
+    }
+    .hbridge-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.6rem;
+    }
+    .hbridge-card.forward h4 i { color: var(--teal); }
+    .hbridge-card.reverse h4 i { color: var(--amber); }
+    .hbridge-card ul {
+      list-style: none;
+      font-size: 0.92rem;
+      color: #4a5c6b;
+    }
+    .hbridge-card ul li {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.3rem 0;
+    }
+    .hbridge-card ul li i {
+      font-size: 0.75rem;
+      margin-top: 0.4rem;
+      color: var(--dark);
+    }
+
+    /* ---------- CODE BLOCK ---------- */
+    .code-block {
+      margin: 1.5rem 0;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid #0f2b45;
+      background: #0b1e2e;
+      box-shadow: 0 8px 16px rgba(34, 49, 66, 0.15);
+    }
+    .code-header {
+      background: #0f2b45;
+      color: var(--amber);
+      padding: 0.7rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .code-header .filename {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .code-header .filename i { color: var(--amber); }
+    .copy-btn {
+      background: var(--amber);
+      color: var(--dark);
+      border: none;
+      padding: 0.35rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease, transform 0.1s ease;
+      font-family: inherit;
+    }
+    .copy-btn:hover {
+      background: #e0a82a;
+      transform: translateY(-1px);
+    }
+    .copy-btn.copied {
+      background: var(--teal);
+      color: var(--white);
+    }
+    .code-content {
+      padding: 1.2rem 1.4rem;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-content .comment { color: #86efac; }
+    .code-content .keyword { color: #93c5fd; }
+    .code-content .string  { color: #fbbf24; }
+    .code-content .number  { color: #f0b634; }
+
+    /* ---------- PIN REFERENCE TABLE ---------- */
+    .pin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.9rem;
+      background: var(--white);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.04);
+    }
+    .pin-table th {
+      background: var(--dark);
+      color: var(--amber);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .pin-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--mist);
+      color: var(--dark);
+    }
+    .pin-table tr:last-child td { border-bottom: none; }
+    .pin-table tr:nth-child(even) td { background: var(--off-white); }
+
+    /* ---------- STEP LIST ---------- */
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.5rem 0;
+    }
+    .steps-list li {
+      counter-increment: step-counter;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--off-white);
+      border-radius: 1rem;
+      padding: 1rem 1.3rem;
+      margin-bottom: 0.8rem;
+      border-left: 5px solid var(--amber);
+      font-size: 0.95rem;
+      color: var(--dark);
+      transition: transform 0.15s ease;
+    }
+    .steps-list li:hover { transform: translateX(4px); }
+    .steps-list li::before {
+      content: counter(step-counter);
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--dark);
+      color: var(--amber);
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- ACTIVITY BOX ---------- */
+    .activity-box {
+      background: linear-gradient(135deg, #223142, #0f2b45);
+      color: var(--white);
+      border-radius: 1.5rem;
+      padding: 2rem 2.2rem;
+      margin: 2.5rem 0 1rem;
+      box-shadow: 0 12px 24px rgba(34, 49, 66, 0.15);
+    }
+    .activity-box h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+    .activity-box h3 i { color: var(--amber); }
+    .activity-box > p {
+      color: #cdd8d8;
+      font-size: 0.98rem;
+      margin-bottom: 1rem;
+    }
+    .activity-tasks {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(220, 226, 226, 0.15);
+      border-radius: 1rem;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+    }
+    .activity-tasks h4 {
+      color: var(--amber);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .activity-tasks ul { list-style: none; }
+    .activity-tasks ul li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      font-size: 0.92rem;
+      color: #cdd8d8;
+    }
+    .activity-tasks ul li i {
+      color: var(--teal);
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+    .challenge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--red);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+    }
+
+    /* ---------- TIP BOX ---------- */
+    .tip-box {
+      background: #fdf6e3;
+      border-left: 5px solid var(--amber);
+      border-radius: 0 12px 12px 0;
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      font-size: 0.92rem;
+      color: var(--dark);
+    }
+    .tip-box i {
+      color: var(--amber);
+      margin-right: 0.5rem;
+    }
+
+    /* ---------- MY INSTRUCTIONS ---------- */
+    .my-instructions {
+      margin-top: 3rem;
+      border: 2px dashed var(--dark);
+      border-radius: 1.5rem;
+      padding: 1.5rem 2rem 2rem;
+      background: var(--off-white);
+      position: relative;
+    }
+    .my-instructions::before {
+      content: "MY INSTRUCTIONS";
+      position: absolute;
+      top: -0.8rem;
+      left: 2rem;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+    }
+    .my-instructions h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .my-instructions h2 i { color: var(--red); }
+    .my-instructions > p {
+      font-size: 0.92rem;
+      color: #4a5c6b;
+      margin-bottom: 1.2rem;
+    }
+    .instruction-placeholder {
+      background: var(--white);
+      border: 1px dashed #a8b4b4;
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      min-height: 140px;
+      font-size: 0.92rem;
+      color: #5a6b6b;
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .instruction-placeholder strong {
+      color: var(--dark);
+      font-style: normal;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ---------- NEXT LESSON BUTTON ---------- */
+    .next-lesson-wrapper {
+      margin-top: 3rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .next-lesson-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: var(--dark);
+      color: var(--white);
+      text-decoration: none;
+      padding: 1rem 1.6rem 1rem 1.8rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(34, 49, 66, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      max-width: 480px;
+    }
+    .next-lesson-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(34, 49, 66, 0.25);
+      background: #1a2735;
+    }
+    .next-lesson-btn .next-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+    .next-lesson-btn .next-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .next-lesson-btn .next-icon {
+      font-size: 1.4rem;
+      color: var(--amber);
+      transition: transform 0.15s ease;
+    }
+    .next-lesson-btn:hover .next-icon {
+      transform: translateX(5px);
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer-note {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #6b7c7c;
+      border-top: 1px solid var(--mist);
+      padding-top: 1.5rem;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      .page { padding: 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .hbridge-grid { grid-template-columns: 1fr; }
+      .code-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+      .activity-box { padding: 1.5rem; }
+      .my-instructions { padding: 1.2rem; }
+      .next-lesson-wrapper { justify-content: center; }
+      .next-lesson-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- ================= BACK LINK ================= -->
+    <a class="back-link" href="index.html">
+      <i class="fas fa-arrow-left"></i> Back to Project Home
+    </a>
+
+    <!-- ================= HEADER ================= -->
+    <span class="unit-badge"><i class="fas fa-gears" style="margin-right: 6px;"></i>Week 3 · Lesson Page</span>
+    <h1>DC Motors & <span class="accent">Motor Driver</span> (L298P)</h1>
+    <div class="subhead">
+      <i class="fas fa-gears" style="margin-right: 8px;"></i>
+      Learn how DC motors spin, why the Arduino can't drive them directly, and how the L298P H-bridge lets you control direction and speed.
+    </div>
+
+    <!-- ============ HERO IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder">
+      <i class="fas fa-image"></i>
+      <span>📸 Upload: L298P motor driver module wired to two DC motors with the Arduino</span>
+      <p class="hint">Recommended size: 1200 × 400 px · JPG or PNG</p>
+    </div>
+
+    <!-- ================= 1. WHAT IS A DC MOTOR ================= -->
+    <div class="section-title">
+      <i class="fas fa-fan"></i> 1. What Is a DC Motor?
+    </div>
+    <div class="content-text">
+      <p>
+        A <strong>DC motor</strong> is an electrical machine that spins when you apply a DC voltage
+        across its two terminals. Reverse the voltage, and the motor spins the other way.
+      </p>
+      <p>
+        DC motors are everywhere — in robots, drones, electric cars, and even your phone's
+        vibration motor. In your Arduino robot, they're what make the wheels turn. ⚙️
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fas fa-bolt"></i>
+        <h4>Voltage-Driven</h4>
+        <p>The more voltage you apply, the faster the motor spins (up to its rated limit).</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-arrows-rotate"></i>
+        <h4>Direction</h4>
+        <p>Swap the + and – wires and the motor reverses — that's how your robot turns.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-dumbbell"></i>
+        <h4>Current-Hungry</h4>
+        <p>Motors can draw 200 mA to 2 A or more — far more than an Arduino pin can supply.</p>
+      </div>
+    </div>
+
+    <!-- ================= 2. WHY A MOTOR DRIVER ================= -->
+    <div class="section-title">
+      <i class="fas fa-shield-halved"></i> 2. Why Do We Need a Motor Driver?
+    </div>
+    <div class="content-text">
+      <p>
+        Each Arduino pin can safely supply only about <strong>20 mA</strong> at 5V. A DC motor
+        needs <strong>hundreds of milliamps</strong> — trying to drive one directly would
+        <strong>fry the Arduino</strong>. 💥
+      </p>
+      <p>
+        The <strong>L298P motor driver</strong> solves this by acting as a bridge between the
+        Arduino's low-power signals and the motor's high-power needs. You send small signals
+        to the driver, and the driver sends big current to the motors.
+      </p>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>Rule of thumb:</strong> If it has a coil and spins — motors, solenoids, relays — you almost always need a driver.
+    </div>
+
+    <!-- ================= 3. H-BRIDGE CONCEPT ================= -->
+    <div class="section-title">
+      <i class="fas fa-diagram-project"></i> 3. The H-Bridge Concept
+    </div>
+    <p class="section-sub">
+      Inside the L298P is an <strong>H-bridge</strong> — a clever circuit of four switches that lets you control a motor's direction without rewiring anything.
+    </p>
+
+    <div class="hbridge-grid">
+      <div class="hbridge-card forward">
+        <h4><i class="fas fa-arrow-right"></i> Forward</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> Switch 1 & Switch 4 are closed</li>
+          <li><i class="fas fa-circle"></i> Current flows left → right through the motor</li>
+          <li><i class="fas fa-circle"></i> Motor spins clockwise</li>
+        </ul>
+      </div>
+      <div class="hbridge-card reverse">
+        <h4><i class="fas fa-arrow-left"></i> Reverse</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> Switch 2 & Switch 3 are closed</li>
+          <li><i class="fas fa-circle"></i> Current flows right → left through the motor</li>
+          <li><i class="fas fa-circle"></i> Motor spins anticlockwise</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- H-bridge diagram placeholder -->
+    <div class="img-placeholder small">
+      <i class="fas fa-diagram-project"></i>
+      <span>📸 Upload: H-bridge schematic showing the four switches & motor</span>
+    </div>
+
+    <!-- ================= 4. L298P PINOUT ================= -->
+    <div class="section-title">
+      <i class="fas fa-microchip"></i> 4. L298P Pinout at a Glance
+    </div>
+    <div class="content-text">
+      <p>
+        The L298P module has clearly labelled pins on each side. Here's what you need to know:
+      </p>
+    </div>
+
+    <table class="pin-table">
+      <tr>
+        <th>Pin Group</th>
+        <th>Names</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><strong>Motor Power</strong></td>
+        <td>+12V, GND</td>
+        <td>Battery input (7V–12V). Powers the motors, not the Arduino.</td>
+      </tr>
+      <tr>
+        <td><strong>5V Output</strong></td>
+        <td>+5V</td>
+        <td>Onboard regulator — can power the Arduino (jumper must be in place).</td>
+      </tr>
+      <tr>
+        <td><strong>Control Inputs</strong></td>
+        <td>IN1, IN2, IN3, IN4</td>
+        <td>Signals from the Arduino. IN1/IN2 for Motor A, IN3/IN4 for Motor B.</td>
+      </tr>
+      <tr>
+        <td><strong>Enable Pins</strong></td>
+        <td>ENA, ENB</td>
+        <td>Speed control via PWM. Remove the jumper to control speed from Arduino.</td>
+      </tr>
+      <tr>
+        <td><strong>Motor Outputs</strong></td>
+        <td>OUT1, OUT2, OUT3, OUT4</td>
+        <td>Connect to the two terminals of Motor A and Motor B.</td>
+      </tr>
+    </table>
+
+    <!-- L298P pinout image placeholder -->
+    <div class="img-placeholder small">
+      <i class="fas fa-diagram-project"></i>
+      <span>📸 Upload: Labelled L298P pinout diagram</span>
+    </div>
+
+    <!-- ================= 5. FIVE STUDENT INSTRUCTIONS ================= -->
+    <div class="section-title">
+      <i class="fas fa-list-ol"></i> 5. Quick Start — Five Simple Steps
+    </div>
+    <p class="section-sub">
+      Follow these five steps in order before uploading your code:
+    </p>
+
+    <ol class="steps-list">
+      <li><strong>Power the L298P:</strong> Connect the battery + to +12V and battery – to GND on the driver.</li>
+      <li><strong>Connect the motors:</strong> Wire one motor to OUT1 & OUT2, and the other to OUT3 & OUT4.</li>
+      <li><strong>Wire the control pins:</strong> Arduino D8 → IN1, D9 → IN2, D10 → IN3, D11 → IN4.</li>
+      <li><strong>Enable speed control:</strong> Remove the ENA and ENB jumpers and connect them to Arduino pins 5 and 6 (PWM).</li>
+      <li><strong>Share ground:</strong> Connect the Arduino GND to the L298P GND — <em>this step is essential!</em></li>
+    </ol>
+
+    <!-- ================= 6. CODE — SPIN MOTORS ================= -->
+    <div class="section-title">
+      <i class="fas fa-code"></i> 6. Code — Spin Both Motors
+    </div>
+    <p class="section-sub">
+      Click <strong>Copy</strong> and paste this into your Arduino IDE. It spins both motors forward, backward, then stops in a loop.
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> spin_motors.ino</span>
+        <button class="copy-btn" data-target="code-1">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-1"><span class="comment">/*
+  Spin Motors — L298P Test
+  Motor A and Motor B spin forward, then reverse, then stop.
+*/</span>
+
+<span class="comment">// Control pins for Motor A</span>
+<span class="keyword">const int</span> IN1 = <span class="number">8</span>;
+<span class="keyword">const int</span> IN2 = <span class="number">9</span>;
+
+<span class="comment">// Control pins for Motor B</span>
+<span class="keyword">const int</span> IN3 = <span class="number">10</span>;
+<span class="keyword">const int</span> IN4 = <span class="number">11</span>;
+
+<span class="keyword">void</span> setup() {
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="comment">// Forward</span>
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH);
+  digitalWrite(IN4, LOW);
+  delay(<span class="number">2000</span>);
+
+  <span class="comment">// Reverse</span>
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, HIGH);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, HIGH);
+  delay(<span class="number">2000</span>);
+
+  <span class="comment">// Stop</span>
+  digitalWrite(IN1, LOW);
+  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);
+  digitalWrite(IN4, LOW);
+  delay(<span class="number">1000</span>);
+}</div>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>How it works:</strong> Setting IN1 HIGH and IN2 LOW tells the L298P to send current one way through Motor A. Flipping them sends current the other way — reversing the spin.
+    </div>
+
+    <!-- ================= 7. CODE — SPEED CONTROL ================= -->
+    <div class="section-title">
+      <i class="fas fa-gauge-high"></i> 7. Code — Control Speed with PWM
+    </div>
+    <p class="section-sub">
+      Use <code>analogWrite()</code> on the ENA/ENB pins to control motor speed from 0 (stop) to 255 (full speed).
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> motor_speed.ino</span>
+        <button class="copy-btn" data-target="code-2">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-2"><span class="comment">/*
+  Motor Speed Control — L298P + PWM
+  Ramps Motor A from slow to fast, then back down.
+*/</span>
+
+<span class="keyword">const int</span> ENA = <span class="number">5</span>;   <span class="comment">// PWM pin for Motor A</span>
+<span class="keyword">const int</span> IN1 = <span class="number">8</span>;
+<span class="keyword">const int</span> IN2 = <span class="number">9</span>;
+
+<span class="keyword">void</span> setup() {
+  pinMode(ENA, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+
+  <span class="comment">// Set Motor A direction: forward</span>
+  digitalWrite(IN1, HIGH);
+  digitalWrite(IN2, LOW);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="comment">// Ramp up speed</span>
+  <span class="keyword">for</span> (<span class="keyword">int</span> speed = <span class="number">0</span>; speed &lt;= <span class="number">255</span>; speed += <span class="number">5</span>) {
+    analogWrite(ENA, speed);
+    delay(<span class="number">30</span>);
+  }
+
+  <span class="comment">// Ramp down speed</span>
+  <span class="keyword">for</span> (<span class="keyword">int</span> speed = <span class="number">255</span>; speed &gt;= <span class="number">0</span>; speed -= <span class="number">5</span>) {
+    analogWrite(ENA, speed);
+    delay(<span class="number">30</span>);
+  }
+}</div>
+    </div>
+
+    <!-- ================= 8. ACTIVITY ================= -->
+    <div class="activity-box">
+      <h3><i class="fas fa-flask"></i> Activity: Spin & Control <span class="challenge-tag">Hands-On</span></h3>
+      <p>
+        Wire up your L298P, connect two motors, and complete the challenges below.
+      </p>
+
+      <div class="activity-tasks">
+        <h4><i class="fas fa-list-check"></i> Your Tasks</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> <strong>Task 1 — Wire the driver:</strong> Connect the battery, both motors, IN1–IN4, and share GND with the Arduino.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 2 — Spin test:</strong> Upload the spin_motors code. Both motors should run forward, reverse, then stop.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 3 — Single motor:</strong> Modify the code so only Motor A runs while Motor B stays off.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 4 — Speed control:</strong> Upload the motor_speed code and observe the ramp-up and ramp-down effect.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 5 — Reflection:</strong> In two sentences, explain why the Arduino can't drive a motor directly and how the L298P fixes this.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ ACTIVITY IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder small">
+      <i class="fas fa-project-diagram"></i>
+      <span>📸 Upload: Wiring diagram — Arduino + L298P + 2 DC motors + battery</span>
+    </div>
+
+    <!-- ============================================
+         MY INSTRUCTIONS SECTION
+         ============================================ -->
+    <div class="my-instructions">
+      <h2><i class="fas fa-pen-to-square"></i> My Instructions</h2>
+      <p>
+        This section is reserved for your own instructions. Replace the placeholder below with your content when you're ready.
+      </p>
+
+      <div class="instruction-placeholder">
+        <strong>📝 Placeholder — Add your instructions here:</strong>
+        Cllick on the link to access manual for <a href="https://5.imimg.com/data5/SELLER/Doc/2025/10/549823076/ZM/PG/ZK/122105810/l298p-motor-driver-module-h-bridge-drive-shield.pdf" target="_blank">L29P Driver Module</a>
+        <br>        
+      </div>
+    </div>
+
+    <!-- ============================================
+         NEXT LESSON BUTTON
+         ============================================ -->
+    <div class="next-lesson-wrapper">
+      <a class="next-lesson-btn" href="ir-sensors-line-following.html">
+        <div>
+          <span class="next-label">Next Lesson →</span>
+          <span class="next-title">IR Sensors (Line Following)</span>
+        </div>
+        <i class="fas fa-circle-arrow-right next-icon"></i>
+      </a>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <div class="footer-note">
+      <i class="fas fa-gears"></i> DC Motors & Motor Driver (L298P) · Grade 10 STEM
+    </div>
+
+  </div>
+
+  <!-- ================= COPY BUTTON SCRIPT ================= -->
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', async () => {
+        const targetId = button.getAttribute('data-target');
+        const codeEl = document.getElementById(targetId);
+        if (!codeEl) return;
+
+        const codeText = codeEl.innerText;
+
+        try {
+          await navigator.clipboard.writeText(codeText);
+        } catch (err) {
+          const textarea = document.createElement('textarea');
+          textarea.value = codeText;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+
+        const originalHTML = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalHTML;
+        }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>

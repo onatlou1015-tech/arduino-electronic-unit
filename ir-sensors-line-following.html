@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IR Sensors (Line Following) · Grade 10</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --dark: #223142;
+      --amber: #f0b634;
+      --red: #d64439;
+      --teal: #3aa68a;
+      --mist: #dce2e2;
+      --white: #ffffff;
+      --off-white: #f4f7f7;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+      background: var(--mist);
+      color: var(--dark);
+      line-height: 1.6;
+      padding: 2rem 1.5rem;
+    }
+
+    .page {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: var(--white);
+      border-radius: 2rem;
+      box-shadow: 0 20px 40px rgba(34, 49, 66, 0.08), 0 6px 12px rgba(34, 49, 66, 0.05);
+      padding: 2.5rem 2.5rem 3rem;
+    }
+
+    /* ---------- BACK LINK ---------- */
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--dark);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      background: var(--mist);
+      padding: 0.4rem 1rem;
+      border-radius: 40px;
+      margin-bottom: 1.2rem;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .back-link:hover {
+      background: var(--dark);
+      color: var(--amber);
+    }
+
+    /* ---------- HEADER ---------- */
+    .unit-badge {
+      display: inline-block;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      padding: 0.35rem 1.1rem;
+      border-radius: 100px;
+      margin-bottom: 0.75rem;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--dark);
+      line-height: 1.2;
+      margin-bottom: 0.5rem;
+    }
+    h1 .accent { color: var(--red); }
+
+    .subhead {
+      font-size: 1.05rem;
+      color: var(--dark);
+      border-left: 5px solid var(--amber);
+      padding: 0.75rem 1.25rem;
+      margin: 0.5rem 0 1.75rem 0;
+      background: #fdf6e3;
+      border-radius: 0 12px 12px 0;
+    }
+
+    /* ---------- IMAGE PLACEHOLDER ---------- */
+    .img-placeholder {
+      background: var(--mist);
+      border: 2px dashed #a8b4b4;
+      border-radius: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #5a6b6b;
+      font-weight: 500;
+      transition: background 0.2s;
+      margin: 1.5rem 0;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .img-placeholder:hover { background: #d2dbdb; }
+    .img-placeholder i {
+      font-size: 2.8rem;
+      color: #7a8c8c;
+      margin-bottom: 0.5rem;
+    }
+    .img-placeholder span {
+      font-size: 0.9rem;
+      background: #c5d0d0;
+      padding: 0.2rem 0.8rem;
+      border-radius: 40px;
+      color: var(--dark);
+    }
+    .img-placeholder .hint {
+      font-size: 0.8rem;
+      color: #5a6b6b;
+      margin-top: 0.4rem;
+    }
+    .img-placeholder.small { padding: 1rem; }
+    .img-placeholder.small i { font-size: 2rem; }
+
+    /* ---------- SECTION TITLES ---------- */
+    .section-title {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 2.5rem 0 1rem 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title i {
+      color: var(--teal);
+      font-size: 1.5rem;
+    }
+
+    .section-sub {
+      color: #4a5c6b;
+      font-size: 1rem;
+      margin-bottom: 1.2rem;
+    }
+
+    /* ---------- CONTENT TEXT ---------- */
+    .content-text {
+      font-size: 1rem;
+      color: var(--dark);
+      background: var(--off-white);
+      border-left: 6px solid var(--teal);
+      padding: 1.3rem 1.7rem;
+      border-radius: 0 12px 12px 0;
+      margin: 1rem 0;
+    }
+    .content-text p + p { margin-top: 0.7rem; }
+    .content-text strong { color: var(--dark); }
+
+    /* ---------- INFO CARDS GRID ---------- */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .info-card {
+      background: var(--off-white);
+      border-left: 6px solid var(--amber);
+      border-radius: 1rem;
+      padding: 1.2rem 1.4rem;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.03);
+      transition: transform 0.15s ease;
+    }
+    .info-card:hover { transform: translateY(-3px); }
+    .info-card i {
+      font-size: 1.5rem;
+      color: var(--teal);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .info-card h4 {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.3rem;
+    }
+    .info-card p {
+      font-size: 0.9rem;
+      color: #4a5c6b;
+    }
+
+    /* ---------- BLACK / WHITE COMPARISON ---------- */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.2rem;
+      margin: 1.5rem 0;
+    }
+    .compare-card {
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      border: 1px solid;
+    }
+    .compare-card.black {
+      background: #e8f5f1;
+      border-color: #b8ddd3;
+      border-left: 6px solid var(--teal);
+    }
+    .compare-card.white {
+      background: #fdf6e3;
+      border-color: #e8d49a;
+      border-left: 6px solid var(--amber);
+    }
+    .compare-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.6rem;
+    }
+    .compare-card.black h4 i { color: var(--teal); }
+    .compare-card.white h4 i { color: var(--amber); }
+    .compare-card ul {
+      list-style: none;
+      font-size: 0.92rem;
+      color: #4a5c6b;
+    }
+    .compare-card ul li {
+      display: flex;
+      gap: 0.5rem;
+      padding: 0.3rem 0;
+    }
+    .compare-card ul li i {
+      font-size: 0.75rem;
+      margin-top: 0.4rem;
+      color: var(--dark);
+    }
+
+    /* ---------- CODE BLOCK ---------- */
+    .code-block {
+      margin: 1.5rem 0;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid #0f2b45;
+      background: #0b1e2e;
+      box-shadow: 0 8px 16px rgba(34, 49, 66, 0.15);
+    }
+    .code-header {
+      background: #0f2b45;
+      color: var(--amber);
+      padding: 0.7rem 1.2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+    .code-header .filename {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .code-header .filename i { color: var(--amber); }
+    .copy-btn {
+      background: var(--amber);
+      color: var(--dark);
+      border: none;
+      padding: 0.35rem 0.9rem;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: background 0.15s ease, transform 0.1s ease;
+      font-family: inherit;
+    }
+    .copy-btn:hover {
+      background: #e0a82a;
+      transform: translateY(-1px);
+    }
+    .copy-btn.copied {
+      background: var(--teal);
+      color: var(--white);
+    }
+    .code-content {
+      padding: 1.2rem 1.4rem;
+      color: #e2e8f0;
+      font-family: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-content .comment { color: #86efac; }
+    .code-content .keyword { color: #93c5fd; }
+    .code-content .string  { color: #fbbf24; }
+    .code-content .number  { color: #f0b634; }
+
+    /* ---------- PIN REFERENCE TABLE ---------- */
+    .pin-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.2rem 0;
+      font-size: 0.9rem;
+      background: var(--white);
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0 4px 8px rgba(34, 49, 66, 0.04);
+    }
+    .pin-table th {
+      background: var(--dark);
+      color: var(--amber);
+      padding: 0.75rem 1rem;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.3px;
+    }
+    .pin-table td {
+      padding: 0.7rem 1rem;
+      border-bottom: 1px solid var(--mist);
+      color: var(--dark);
+    }
+    .pin-table tr:last-child td { border-bottom: none; }
+    .pin-table tr:nth-child(even) td { background: var(--off-white); }
+
+    /* ---------- STEP LIST ---------- */
+    .steps-list {
+      list-style: none;
+      counter-reset: step-counter;
+      margin: 1.5rem 0;
+    }
+    .steps-list li {
+      counter-increment: step-counter;
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      background: var(--off-white);
+      border-radius: 1rem;
+      padding: 1rem 1.3rem;
+      margin-bottom: 0.8rem;
+      border-left: 5px solid var(--amber);
+      font-size: 0.95rem;
+      color: var(--dark);
+      transition: transform 0.15s ease;
+    }
+    .steps-list li:hover { transform: translateX(4px); }
+    .steps-list li::before {
+      content: counter(step-counter);
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      background: var(--dark);
+      color: var(--amber);
+      font-weight: 700;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+    }
+
+    /* ---------- ACTIVITY BOX ---------- */
+    .activity-box {
+      background: linear-gradient(135deg, #223142, #0f2b45);
+      color: var(--white);
+      border-radius: 1.5rem;
+      padding: 2rem 2.2rem;
+      margin: 2.5rem 0 1rem;
+      box-shadow: 0 12px 24px rgba(34, 49, 66, 0.15);
+    }
+    .activity-box h3 {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      color: var(--white);
+    }
+    .activity-box h3 i { color: var(--amber); }
+    .activity-box > p {
+      color: #cdd8d8;
+      font-size: 0.98rem;
+      margin-bottom: 1rem;
+    }
+    .activity-tasks {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(220, 226, 226, 0.15);
+      border-radius: 1rem;
+      padding: 1.2rem 1.5rem;
+      margin-top: 1rem;
+    }
+    .activity-tasks h4 {
+      color: var(--amber);
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .activity-tasks ul { list-style: none; }
+    .activity-tasks ul li {
+      display: flex;
+      gap: 0.6rem;
+      padding: 0.35rem 0;
+      font-size: 0.92rem;
+      color: #cdd8d8;
+    }
+    .activity-tasks ul li i {
+      color: var(--teal);
+      font-size: 0.85rem;
+      margin-top: 0.4rem;
+    }
+    .challenge-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--red);
+      color: var(--white);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.7rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-left: 0.5rem;
+    }
+
+    /* ---------- TIP BOX ---------- */
+    .tip-box {
+      background: #fdf6e3;
+      border-left: 5px solid var(--amber);
+      border-radius: 0 12px 12px 0;
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      font-size: 0.92rem;
+      color: var(--dark);
+    }
+    .tip-box i {
+      color: var(--amber);
+      margin-right: 0.5rem;
+    }
+
+    /* ---------- MY INSTRUCTIONS ---------- */
+    .my-instructions {
+      margin-top: 3rem;
+      border: 2px dashed var(--dark);
+      border-radius: 1.5rem;
+      padding: 1.5rem 2rem 2rem;
+      background: var(--off-white);
+      position: relative;
+    }
+    .my-instructions::before {
+      content: "MY INSTRUCTIONS";
+      position: absolute;
+      top: -0.8rem;
+      left: 2rem;
+      background: var(--dark);
+      color: var(--amber);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 0.25rem 0.9rem;
+      border-radius: 40px;
+      text-transform: uppercase;
+    }
+    .my-instructions h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .my-instructions h2 i { color: var(--red); }
+    .my-instructions > p {
+      font-size: 0.92rem;
+      color: #4a5c6b;
+      margin-bottom: 1.2rem;
+    }
+    .instruction-placeholder {
+      background: var(--white);
+      border: 1px dashed #a8b4b4;
+      border-radius: 1rem;
+      padding: 1.4rem 1.6rem;
+      min-height: 140px;
+      font-size: 0.92rem;
+      color: #5a6b6b;
+      font-style: italic;
+      line-height: 1.8;
+    }
+    .instruction-placeholder strong {
+      color: var(--dark);
+      font-style: normal;
+      display: block;
+      margin-bottom: 0.6rem;
+    }
+
+    /* ---------- NEXT LESSON BUTTON ---------- */
+    .next-lesson-wrapper {
+      margin-top: 3rem;
+      display: flex;
+      justify-content: flex-end;
+    }
+    .next-lesson-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.8rem;
+      background: var(--dark);
+      color: var(--white);
+      text-decoration: none;
+      padding: 1rem 1.6rem 1rem 1.8rem;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(34, 49, 66, 0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+      max-width: 480px;
+    }
+    .next-lesson-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(34, 49, 66, 0.25);
+      background: #1a2735;
+    }
+    .next-lesson-btn .next-label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: var(--amber);
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+    .next-lesson-btn .next-title {
+      display: block;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+    .next-lesson-btn .next-icon {
+      font-size: 1.4rem;
+      color: var(--amber);
+      transition: transform 0.15s ease;
+    }
+    .next-lesson-btn:hover .next-icon {
+      transform: translateX(5px);
+    }
+
+    /* ---------- FOOTER ---------- */
+    .footer-note {
+      text-align: center;
+      margin-top: 3rem;
+      font-size: 0.85rem;
+      color: #6b7c7c;
+      border-top: 1px solid var(--mist);
+      padding-top: 1.5rem;
+    }
+
+    /* ---------- RESPONSIVE ---------- */
+    @media (max-width: 800px) {
+      .page { padding: 1.5rem; }
+      h1 { font-size: 1.8rem; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .code-header { flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+      .activity-box { padding: 1.5rem; }
+      .my-instructions { padding: 1.2rem; }
+      .next-lesson-wrapper { justify-content: center; }
+      .next-lesson-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- ================= BACK LINK ================= -->
+    <a class="back-link" href="index.html">
+      <i class="fas fa-arrow-left"></i> Back to Project Home
+    </a>
+
+    <!-- ================= HEADER ================= -->
+    <span class="unit-badge"><i class="fas fa-road" style="margin-right: 6px;"></i>Week 4 · Lesson Page</span>
+    <h1>IR Sensors <span class="accent">(Line Following)</span></h1>
+    <div class="subhead">
+      <i class="fas fa-road" style="margin-right: 8px;"></i>
+      Learn how infrared reflectance sensors "see" black and white, calibrate them, and use them to make a robot follow a line.
+    </div>
+
+    <!-- ============ HERO IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder">
+      <i class="fas fa-image"></i>
+      <span>📸 Upload: Robot with two IR sensors underneath, following a black line</span>
+      <p class="hint">Recommended size: 1200 × 400 px · JPG or PNG</p>
+    </div>
+
+    <!-- ================= 1. HOW IR SENSORS WORK ================= -->
+    <div class="section-title">
+      <i class="fas fa-lightbulb"></i> 1. How Do IR Sensors Work?
+    </div>
+    <div class="content-text">
+      <p>
+        An <strong>infrared (IR) reflectance sensor</strong> has two parts: an <strong>IR emitter</strong>
+        (an invisible LED) and an <strong>IR receiver</strong> (a photodiode). The emitter shines
+        infrared light down onto the surface, and the receiver measures how much bounces back.
+      </p>
+      <p>
+        <strong>White surfaces</strong> reflect most of the IR light → the receiver detects a strong signal.<br>
+        <strong>Black surfaces</strong> absorb most of the IR light → the receiver detects very little.
+      </p>
+      <p>
+        This difference is how your robot knows whether it's over the line or the floor. 🖤🤍
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <i class="fas fa-sun"></i>
+        <h4>IR Emitter</h4>
+        <p>An infrared LED that shines invisible light onto the surface below.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-eye"></i>
+        <h4>IR Receiver</h4>
+        <p>A photodiode that measures how much IR light bounces back from the surface.</p>
+      </div>
+      <div class="info-card">
+        <i class="fas fa-sliders"></i>
+        <h4>Comparator</h4>
+        <p>Most modules include a small chip that outputs a clean digital HIGH or LOW signal.</p>
+      </div>
+    </div>
+
+    <!-- IR sensor close-up image placeholder -->
+    <div class="img-placeholder small">
+      <i class="fas fa-camera"></i>
+      <span>📸 Upload: Close-up of a typical IR reflectance sensor module</span>
+    </div>
+
+    <!-- ================= 2. BLACK VS WHITE ================= -->
+    <div class="section-title">
+      <i class="fas fa-circle-half-stroke"></i> 2. Black vs White — What the Sensor "Sees"
+    </div>
+    <p class="section-sub">
+      Most IR modules output <strong>LOW (0)</strong> when they detect a black surface, and <strong>HIGH (1)</strong> on white.
+    </p>
+
+    <div class="compare-grid">
+      <div class="compare-card black">
+        <h4><i class="fas fa-square"></i> Black Surface</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> Absorbs IR light</li>
+          <li><i class="fas fa-circle"></i> Little light returns to the receiver</li>
+          <li><i class="fas fa-circle"></i> Module output → <strong>LOW (0)</strong> (usually)</li>
+          <li><i class="fas fa-circle"></i> Means: "I'm on the line"</li>
+        </ul>
+      </div>
+      <div class="compare-card white">
+        <h4><i class="fas fa-square"></i> White Surface</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> Reflects IR light</li>
+          <li><i class="fas fa-circle"></i> Strong light returns to the receiver</li>
+          <li><i class="fas fa-circle"></i> Module output → <strong>HIGH (1)</strong> (usually)</li>
+          <li><i class="fas fa-circle"></i> Means: "I'm off the line"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>Important:</strong> Output polarity can vary by module. Always test yours first with the Serial Monitor before writing line-following logic.
+    </div>
+
+    <!-- ================= 3. DIGITAL VS ANALOG OUTPUT ================= -->
+    <div class="section-title">
+      <i class="fas fa-wave-square"></i> 3. Digital vs Analog Output
+    </div>
+    <div class="content-text">
+      <p>
+        Many IR sensor modules have <strong>two outputs</strong>: a <strong>digital (DO)</strong> pin
+        that gives a clean HIGH/LOW signal, and an <strong>analog (AO)</strong> pin that gives a
+        continuous value depending on surface reflectivity.
+      </p>
+      <p>
+        For <strong>basic line following</strong>, the digital output is easier — the module already
+        does the "is it black or white?" decision for you using its onboard potentiometer.
+      </p>
+      <p>
+        For <strong>smoother, more advanced following</strong>, use the analog output and compare
+        sensor values in code.
+      </p>
+    </div>
+
+    <table class="pin-table">
+      <tr>
+        <th>Pin</th>
+        <th>Type</th>
+        <th>Purpose</th>
+      </tr>
+      <tr>
+        <td><strong>VCC</strong></td>
+        <td>Power</td>
+        <td>Connect to Arduino 5V.</td>
+      </tr>
+      <tr>
+        <td><strong>GND</strong></td>
+        <td>Power</td>
+        <td>Connect to Arduino GND.</td>
+      </tr>
+      <tr>
+        <td><strong>DO</strong></td>
+        <td>Digital Output</td>
+        <td>HIGH or LOW depending on surface. Connect to a digital pin.</td>
+      </tr>
+      <tr>
+        <td><strong>AO</strong></td>
+        <td>Analog Output</td>
+        <td>Continuous value 0–1023. Connect to an analog pin (optional).</td>
+      </tr>
+    </table>
+
+    <!-- ================= 4. FIVE STUDENT INSTRUCTIONS ================= -->
+    <div class="section-title">
+      <i class="fas fa-list-ol"></i> 4. Quick Start — Five Simple Steps
+    </div>
+    <p class="section-sub">
+      Follow these five steps in order before writing any line-following code:
+    </p>
+
+    <ol class="steps-list">
+      <li><strong>Wire the sensor:</strong> Connect VCC → 5V, GND → GND, and DO → Arduino digital pin 2.</li>
+      <li><strong>Mount the sensor:</strong> Place it 5–10 mm above the floor, pointing straight down at the surface.</li>
+      <li><strong>Open the Serial Monitor:</strong> Upload a simple test sketch (next section) to see the sensor values live.</li>
+      <li><strong>Calibrate:</strong> Turn the small potentiometer until the onboard LED turns on over black and off over white (or vice versa).</li>
+      <li><strong>Record your values:</strong> Note the digital HIGH/LOW reading for black and white — you'll use these in your line-following logic.</li>
+    </ol>
+
+    <!-- ================= 5. CODE — DETECT BLACK LINE ================= -->
+    <div class="section-title">
+      <i class="fas fa-code"></i> 5. Code — Detect Black Line (Light an LED)
+    </div>
+    <p class="section-sub">
+      Click <strong>Copy</strong> and paste this into your Arduino IDE. The onboard LED lights up when the sensor sees black.
+    </p>
+
+    <!-- CODE BLOCK 1 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> detect_line.ino</span>
+        <button class="copy-btn" data-target="code-1">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-1"><span class="comment">/*
+  Detect Black Line — IR Sensor Test
+  Lights the onboard LED when the sensor sees a black surface.
+  Watch the Serial Monitor for live readings.
+*/</span>
+
+<span class="keyword">const int</span> sensorPin = <span class="number">2</span>;   <span class="comment">// IR sensor digital output</span>
+<span class="keyword">const int</span> ledPin = <span class="number">13</span>;      <span class="comment">// Onboard LED</span>
+
+<span class="keyword">void</span> setup() {
+  pinMode(sensorPin, INPUT);
+  pinMode(ledPin, OUTPUT);
+  Serial.begin(<span class="number">9600</span>);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="keyword">int</span> sensorValue = digitalRead(sensorPin);
+  Serial.println(sensorValue);
+
+  <span class="comment">// Most modules: LOW = black detected</span>
+  <span class="keyword">if</span> (sensorValue == LOW) {
+    digitalWrite(ledPin, HIGH);   <span class="comment">// Black → LED on</span>
+  } <span class="keyword">else</span> {
+    digitalWrite(ledPin, LOW);    <span class="comment">// White → LED off</span>
+  }
+
+  delay(<span class="number">100</span>);
+}</div>
+    </div>
+
+    <div class="tip-box">
+      <i class="fas fa-lightbulb"></i>
+      <strong>How it works:</strong> The sensor outputs LOW over black, HIGH over white. The Arduino reads that value and turns the LED on or off accordingly.
+    </div>
+
+    <!-- ================= 6. CODE — SIMPLE LINE FOLLOW ================= -->
+    <div class="section-title">
+      <i class="fas fa-gauge-high"></i> 6. Code — Simple Two-Sensor Line Follower
+    </div>
+    <p class="section-sub">
+      With two sensors (left and right), the robot can correct itself when it drifts off the line.
+    </p>
+
+    <!-- CODE BLOCK 2 -->
+    <div class="code-block">
+      <div class="code-header">
+        <span class="filename"><i class="fas fa-file-code"></i> line_follow.ino</span>
+        <button class="copy-btn" data-target="code-2">
+          <i class="fas fa-copy"></i> Copy
+        </button>
+      </div>
+      <div class="code-content" id="code-2"><span class="comment">/*
+  Two-Sensor Line Follower
+  Left and right IR sensors guide the robot along a black line.
+  Motor pins match the L298P wiring from Week 3.
+*/</span>
+
+<span class="comment">// IR sensors</span>
+<span class="keyword">const int</span> leftSensor  = <span class="number">2</span>;
+<span class="keyword">const int</span> rightSensor = <span class="number">4</span>;
+
+<span class="comment">// L298P motor control pins</span>
+<span class="keyword">const int</span> IN1 = <span class="number">8</span>;
+<span class="keyword">const int</span> IN2 = <span class="number">9</span>;
+<span class="keyword">const int</span> IN3 = <span class="number">10</span>;
+<span class="keyword">const int</span> IN4 = <span class="number">11</span>;
+
+<span class="keyword">void</span> setup() {
+  pinMode(leftSensor, INPUT);
+  pinMode(rightSensor, INPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
+}
+
+<span class="comment">// --- Motor helper functions ---</span>
+<span class="keyword">void</span> forward() {
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> turnLeft() {
+  digitalWrite(IN1, LOW);  digitalWrite(IN2, LOW);
+  digitalWrite(IN3, HIGH); digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> turnRight() {
+  digitalWrite(IN1, HIGH); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW);  digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> stopMotors() {
+  digitalWrite(IN1, LOW); digitalWrite(IN2, LOW);
+  digitalWrite(IN3, LOW); digitalWrite(IN4, LOW);
+}
+
+<span class="keyword">void</span> loop() {
+  <span class="keyword">int</span> left  = digitalRead(leftSensor);
+  <span class="keyword">int</span> right = digitalRead(rightSensor);
+
+  <span class="comment">// Both on black → go straight</span>
+  <span class="keyword">if</span> (left == LOW &amp;&amp; right == LOW) {
+    forward();
+  }
+  <span class="comment">// Left off line → turn left</span>
+  <span class="keyword">else if</span> (left == HIGH &amp;&amp; right == LOW) {
+    turnLeft();
+  }
+  <span class="comment">// Right off line → turn right</span>
+  <span class="keyword">else if</span> (left == LOW &amp;&amp; right == HIGH) {
+    turnRight();
+  }
+  <span class="comment">// Both off line → stop</span>
+  <span class="keyword">else</span> {
+    stopMotors();
+  }
+}</div>
+    </div>
+
+    <!-- ================= 7. ACTIVITY ================= -->
+    <div class="activity-box">
+      <h3><i class="fas fa-flask"></i> Activity: Detect & Follow <span class="challenge-tag">Hands-On</span></h3>
+      <p>
+        Set up your IR sensors, calibrate them, and build a robot that can follow a black line.
+      </p>
+
+      <div class="activity-tasks">
+        <h4><i class="fas fa-list-check"></i> Your Tasks</h4>
+        <ul>
+          <li><i class="fas fa-circle"></i> <strong>Task 1 — Wire the sensor:</strong> Connect VCC, GND, and DO to pin 2 on the Arduino.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 2 — Open the Serial Monitor:</strong> Upload the detect_line sketch and watch the readings as you slide the sensor over black and white surfaces.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 3 — Calibrate:</strong> Turn the potentiometer until the onboard LED reliably turns on over black.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 4 — Two sensors:</strong> Add a second IR sensor and wire it to pin 4. Test both sensors independently first.</li>
+          <li><i class="fas fa-circle"></i> <strong>Task 5 — Line follow:</strong> Upload the line_follow code and test it on a simple black-line track. Adjust code or motor speed if needed.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============ ACTIVITY IMAGE PLACEHOLDER ============ -->
+    <div class="img-placeholder small">
+      <i class="fas fa-project-diagram"></i>
+      <span>📸 Upload: Wiring diagram — Arduino + 2 IR sensors + L298P + motors</span>
+    </div>
+
+    <!-- ============================================
+         MY INSTRUCTIONS SECTION
+         ============================================ -->
+    <div class="my-instructions">
+      <h2><i class="fas fa-pen-to-square"></i> My Instructions</h2>
+      <p>
+        This section is reserved for your own instructions. Replace the placeholder below with your content when you're ready.
+      </p>
+
+      <div class="instruction-placeholder">
+        <strong>📝 Placeholder — Add your instructions here:</strong>
+        Write your own step-by-step instructions, tips, or reminders for students.<br>
+        You can use this space to add classroom rules, extra challenges, submission guidelines, or anything else you want to include.<br>
+        Replace this placeholder text with your content.
+      </div>
+    </div>
+
+    <!-- ============================================
+         NEXT LESSON BUTTON
+         ============================================ -->
+    <div class="next-lesson-wrapper">
+      <a class="next-lesson-btn" href="ultrasonic-sensor-hc-sr04.html">
+        <div>
+          <span class="next-label">Next Lesson →</span>
+          <span class="next-title">Ultrasonic Sensor (HC-SR04)</span>
+        </div>
+        <i class="fas fa-circle-arrow-right next-icon"></i>
+      </a>
+    </div>
+
+    <!-- ================= FOOTER ================= -->
+    <div class="footer-note">
+      <i class="fas fa-road"></i> IR Sensors (Line Following) · Grade 10 STEM
+    </div>
+
+  </div>
+
+  <!-- ================= COPY BUTTON SCRIPT ================= -->
+  <script>
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', async () => {
+        const targetId = button.getAttribute('data-target');
+        const codeEl = document.getElementById(targetId);
+        if (!codeEl) return;
+
+        const codeText = codeEl.innerText;
+
+        try {
+          await navigator.clipboard.writeText(codeText);
+        } catch (err) {
+          const textarea = document.createElement('textarea');
+          textarea.value = codeText;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+        }
+
+        const originalHTML = button.innerHTML;
+        button.classList.add('copied');
+        button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+
+        setTimeout(() => {
+          button.classList.remove('copied');
+          button.innerHTML = originalHTML;
+        }, 1800);
+      });
+    });
+  </script>
+</body>
+</html>
